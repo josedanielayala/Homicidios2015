@@ -32,8 +32,8 @@
 
 var margin = {top: 20, right: 160, bottom: 35, left: 30};
 
-var width = 800 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+var width = 650 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
 
 var svg = d3.select("body")
   .append("svg")
@@ -46,30 +46,36 @@ var svg = d3.select("body")
 /* Data in strings like it would be if imported from a csv */
 
 var data = [
-  { day: "Sun", FUEGO: "1766", BLANCA: "875", CONTUNDENTES: "79", OTROS: "50" },
-  { day: "Mon", FUEGO: "1205", BLANCA: "393", CONTUNDENTES: "56", OTROS: "35" },
-  { day: "Tue", FUEGO: "1105", BLANCA: "277", CONTUNDENTES: "57", OTROS: "22" },
-  { day: "Wed", FUEGO: "1070", BLANCA: "222", CONTUNDENTES: "57", OTROS: "32" },
-  { day: "Thu", FUEGO: "1246", BLANCA: "321", CONTUNDENTES: "47", OTROS: "27" },
-  { day: "Fri", FUEGO: "1262", BLANCA: "310", CONTUNDENTES: "52", OTROS: "17" },
-  { day: "Sat", FUEGO: "1353", BLANCA: "400", CONTUNDENTES: "68", OTROS: "35" },
+  { mes: "Jan", FUEGO: "839", BLANCA: "221", CONTUNDENTES: "35", OTROS: "18" },
+  { mes: "Feb", FUEGO: "598", BLANCA: "177", CONTUNDENTES: "42", OTROS: "18" },
+  { mes: "Mar", FUEGO: "760", BLANCA: "241", CONTUNDENTES: "29", OTROS: "23" },
+  { mes: "Apr", FUEGO: "728", BLANCA: "190", CONTUNDENTES: "29", OTROS: "25" },
+  { mes: "May", FUEGO: "783", BLANCA: "245", CONTUNDENTES: "37", OTROS: "17" },
+  { mes: "Jun", FUEGO: "792", BLANCA: "248", CONTUNDENTES: "33", OTROS: "22" }, 
+  { mes: "Jul", FUEGO: "804", BLANCA: "218", CONTUNDENTES: "35", OTROS: "8" },
+  { mes: "Aug", FUEGO: "714", BLANCA: "238", CONTUNDENTES: "29", OTROS: "22" },
+  { mes: "Sep", FUEGO: "684", BLANCA: "214", CONTUNDENTES: "36", OTROS: "19" },
+  { mes: "Oct", FUEGO: "668", BLANCA: "224", CONTUNDENTES: "26", OTROS: "13" },
+  { mes: "Nov", FUEGO: "772", BLANCA: "279", CONTUNDENTES: "42", OTROS: "17" },
+  { mes: "Dec", FUEGO: "865", BLANCA: "303", CONTUNDENTES: "43", OTROS: "16" }, 
 ];
 
-var parse = d3.time.format("%a").parse;
+var parse = d3.time.format("%b").parse;
 
 
 // Transpose the data into layers
 var dataset = d3.layout.stack()(["FUEGO", "BLANCA","CONTUNDENTES", "OTROS"].map(function(Arma) {
   return data.map(function(d) {
-    return {x: parse(d.day), y: +d[Arma]};
+    return {x: parse(d.mes), y: +d[Arma]};
   });
 }));
 
 
 // Set x, y and colors
 var x = d3.scale.ordinal()
- .domain(dataset[0].map(function(d) { return d.x; }))
-  .rangeRoundBands([10, width-10], 0.8);
+.domain(dataset[0].map(function(d) { return d.x; }))
+  .rangeRoundBands([10, width-10], 0.15);
+  
 
 var y = d3.scale.linear()
   .domain([0, d3.max(dataset, function(d) {  return d3.max(d, function(d) { return d.y0 + d.y; });  })])
@@ -82,14 +88,16 @@ var colors = ["b33040", "#d25c4d", "#f2b447", "#d9d574"];
 var yAxis = d3.svg.axis()
   .scale(y)
   .orient("left")
-  .ticks(5)
+  .ticks(10)
   .tickSize(-width, 0, 0)
   .tickFormat( function(d) { return d } );
 
 var xAxis = d3.svg.axis()
   .scale(x)
   .orient("bottom")
-  .tickFormat(d3.time.format("%A"));
+  .tickSize(3)
+  .tickPadding(5)
+  .tickFormat(d3.time.format("%b"));
 
 svg.append("g")
   .attr("class", "y axis")
