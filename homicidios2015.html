@@ -20,7 +20,8 @@
 </style>
 </head>
 <body>
-
+<!--  @vlarandac Daniel, debes preparar una página web independiente a JSfiddle que permita tener acceso a tus visualizaciones e insights-->
+	
 <h2 align="center">Insight: Vender chalecos antibalas: una oportunidad de negocio con gran mercado!!!</h2>
 <br></br>
 <p>Analizando los resultados arrojados por el set de datos abiertos del Grupo Información de Criminalidad (GICRI) - DIJIN, el índice de homicidios con arma de fuego casi doblega a la suma de los otros tipos de medios utilizados para cometer homicidios en Colombia, de acuerdo a las cifras arrojadas para el año 2015</p>
@@ -44,7 +45,15 @@ var svg = d3.select("body")
 
 
 /* Data in strings like it would be if imported from a csv */
+	
+/* @vlarandac podrías hacer la carga de tus datos desde un archivo .json de tal forma que no quede estatico en el código;
 
+d3.json('./data.json', function(error, data) 
+{
+})
+
+de igual manera podrías indluir más años, así podría evaluarse el comportamiento de los homicidos en varios periodos y poder extraer mejores insights*/
+	
 var data = [
   { mes: "Jan", FUEGO: "839", BLANCA: "221", CONTUNDENTES: "35", OTROS: "18" },
   { mes: "Feb", FUEGO: "598", BLANCA: "177", CONTUNDENTES: "42", OTROS: "18" },
@@ -66,7 +75,9 @@ var parse = d3.time.format("%b").parse;
 // Transpose the data into layers
 var dataset = d3.layout.stack()(["FUEGO", "BLANCA","CONTUNDENTES", "OTROS"].map(function(Arma) {
   return data.map(function(d) {
-    return {x: parse(d.mes), y: +d[Arma]};
+//    return {x: parse(d.mes), y: +d[Arma]};
+// @vlarandac podrías no paresear el dato ya que lo tienes en un valor que podría mostrarse y lo puedes traer en españool desde la carga
+    return {x: d.mes, y: +d[Arma]};
   });
 }));
 
@@ -105,9 +116,11 @@ svg.append("g")
 
 svg.append("g")
   .attr("class", "x axis")
-  .attr("transform", "translate(0," + height + ")")
-  .call(xAxis);
-
+ //.attr("transform", "translate(0," + height + ")")
+ // .call(xAxis);
+ //@vlarandac puedes mostrar en el eje de abajo los meses para que la información sea un poco más clara.
+  .attr("transform", "translate(10," + height + ")")  
+  .call(d3.axisBottom(x))
 
 // Create groups for each series, rects for each segment 
 var groups = svg.selectAll("g.cost")
